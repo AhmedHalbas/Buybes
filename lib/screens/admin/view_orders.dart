@@ -21,6 +21,7 @@ class ViewOrders extends StatelessWidget {
                 totalPrice: doc.data[kTotallPrice],
                 address: doc.data[kAddress],
                 documentId: doc.documentID,
+                isConfirmed: doc.data[kIsConfirmed],
               ));
             }
             return ListView.builder(

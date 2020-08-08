@@ -88,6 +88,52 @@ class ViewOrderDetails extends StatelessWidget {
                       itemCount: products.length,
                     ),
                   ),
+                  Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Expanded(
+                          child: ButtonTheme(
+                            buttonColor: kMainColor,
+                            child: RaisedButton(
+                              onPressed: () {
+                                fireStore.editOrder(order.documentId, {
+                                  kIsConfirmed: true,
+                                });
+
+                                Scaffold.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Order Confirmed'),
+                                  ),
+                                );
+                              },
+                              child: Text('Confirm Order'),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 15,
+                        ),
+                        Expanded(
+                          child: ButtonTheme(
+                            buttonColor: kMainColor,
+                            child: RaisedButton(
+                              onPressed: () {
+                                fireStore.deleteOrder(order.documentId);
+                                Scaffold.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Order Deleted'),
+                                  ),
+                                );
+                              },
+                              child: Text('Delete Order'),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
                 ],
               ),
             );

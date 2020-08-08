@@ -200,6 +200,7 @@ class CartScreen extends StatelessWidget {
               fireStore.storeOrders({
                 kTotallPrice: totalPrice,
                 kAddress: address,
+                kIsConfirmed: false
               }, products);
               Navigator.pop(context);
               Scaffold.of(context).showSnackBar(
