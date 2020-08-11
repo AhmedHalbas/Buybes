@@ -1,10 +1,12 @@
 import 'package:buybes/constants.dart';
 import 'package:buybes/models/product.dart';
-import 'package:buybes/provider/cart_item.dart';
 import 'package:buybes/screens/user/cart_screen.dart';
+import 'package:buybes/services/auth.dart';
+import 'package:buybes/services/fire_store.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProductInfo extends StatefulWidget {
   static String id = 'ProductInfo';
@@ -14,8 +16,22 @@ class ProductInfo extends StatefulWidget {
 
 class _ProductInfoState extends State<ProductInfo> {
   int _quantity = 1;
+  FireStore fireStore = FireStore();
+  final auth = Auth();
+  CollectionReference _documentRef;
+  List<String> cartProducts = [];
+  String uId;
+
+  @override
+  void initState() {
+    getUserId();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
+    getCartItems();
+
     Product product = ModalRoute.of(context).settings.arguments;
     return Scaffold(
       body: Stack(
@@ -24,7 +40,7 @@ class _ProductInfoState extends State<ProductInfo> {
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
             child: Image(
-              image: AssetImage(product.pLocation),
+              image: AssetImage(product?.pLocation ?? ''),
               fit: BoxFit.fill,
             ),
           ),
@@ -66,7 +82,7 @@ class _ProductInfoState extends State<ProductInfo> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            product.pName,
+                            product?.pName ?? '',
                             style: TextStyle(
                                 fontSize: 20, fontWeight: FontWeight.bold),
                           ),
@@ -74,7 +90,7 @@ class _ProductInfoState extends State<ProductInfo> {
                             height: 10,
                           ),
                           Text(
-                            product.pDescription,
+                            product?.pDescription ?? '',
                             style: TextStyle(
                                 fontSize: 20, fontWeight: FontWeight.w800),
                           ),
@@ -82,7 +98,7 @@ class _ProductInfoState extends State<ProductInfo> {
                             height: 10,
                           ),
                           Text(
-                            '\$${product.pPrice}',
+                            '\$${product?.pPrice ?? ''}',
                             style: TextStyle(
                                 fontSize: 20, fontWeight: FontWeight.bold),
                           ),
@@ -145,7 +161,9 @@ class _ProductInfoState extends State<ProductInfo> {
                       ),
                       color: kMainColor,
                       onPressed: () {
-                        addToCart(context, product);
+                        setState(() {
+                          addToCart(context, product);
+                        });
                       },
                       child: Text(
                         'Add To Cart'.toUpperCase(),
@@ -179,30 +197,72 @@ class _ProductInfoState extends State<ProductInfo> {
     });
   }
 
+  getCartItems() {
+    _documentRef = Firestore.instance
+        .collection(kProductsToCartCollection)
+        .document(uId)
+        .collection(kUser);
+
+    _documentRef.getDocuments().then((ds) {
+      if (ds != null) {
+        ds.documents.forEach((value) {
+          cartProducts.add(value.data[kProductName]);
+        });
+      }
+    });
+  }
+
+  getUserId() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    setState(() {
+      uId = preferences.getString(kUserId);
+    });
+  }
+
   void addToCart(context, product) {
     bool inCart = false;
     product.pQuantity = _quantity;
-    CartItem cartItem = Provider.of<CartItem>(context, listen: false);
-    var productsInCart = cartItem.products;
-    for (var productInCart in productsInCart) {
-      if (productInCart.pName == product.pName) {
+
+    for (String cartProduct in cartProducts) {
+      if (product.pName == cartProduct) {
         inCart = true;
       }
     }
 
     if (inCart) {
+      if (cartProducts != null) {
+        EditCartData(product);
+      }
+
       Scaffold.of(context).showSnackBar(
         SnackBar(
-          content: Text('Already in Cart'),
+          content: Text('Successfully Edited in Cart'),
         ),
       );
     } else {
-      cartItem.addProduct(product);
+      SaveCartData(product);
       Scaffold.of(context).showSnackBar(
         SnackBar(
           content: Text('Added to Cart'),
         ),
       );
     }
+  }
+
+  void SaveCartData(Product product) {
+    fireStore.addProductToCart(product, uId);
+  }
+
+  void EditCartData(Product product) {
+    fireStore.editCartItem(
+      product.pID,
+      uId,
+      {
+        kProductName: product.pName,
+        kProductPrice: product.pPrice,
+        kProductLocation: product.pLocation,
+        kProductQuantity: product.pQuantity,
+      },
+    );
   }
 }

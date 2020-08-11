@@ -1,17 +1,32 @@
 import 'package:buybes/constants.dart';
 import 'package:buybes/custom_widgets/custom_pop_up_menu.dart';
 import 'package:buybes/models/product.dart';
-import 'package:buybes/provider/cart_item.dart';
 import 'package:buybes/screens/user/product_info.dart';
 import 'package:buybes/services/fire_store.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class CartScreen extends StatelessWidget {
+class CartScreen extends StatefulWidget {
   static String id = 'CartScreen';
+
+  @override
+  _CartScreenState createState() => _CartScreenState();
+}
+
+class _CartScreenState extends State<CartScreen> {
+  FireStore _fireStore = FireStore();
+  List<Product> products;
+  String uId;
+
+  @override
+  void initState() {
+    super.initState();
+    getUserId();
+  }
+
   @override
   Widget build(BuildContext context) {
-    List<Product> products = Provider.of<CartItem>(context).products;
     final double screenHeight = MediaQuery.of(context).size.height;
     final double screenWidth = MediaQuery.of(context).size.width;
     final double appBarHeight = AppBar().preferredSize.height;
@@ -39,100 +54,119 @@ class CartScreen extends StatelessWidget {
       ),
       body: Column(
         children: <Widget>[
-          LayoutBuilder(builder: (context, constrains) {
-            if (products.isNotEmpty) {
-              return Container(
-                height: screenHeight -
-                    screenHeight * 0.1 -
-                    appBarHeight -
-                    statusBarHeight,
-                child: ListView.builder(
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: GestureDetector(
-                        onTapUp: (details) {
-                          showCustomMenu(details, context, products[index]);
-                        },
-                        child: Container(
-                          color: kMainColor,
-                          child: Row(
-                            children: <Widget>[
-                              CircleAvatar(
-                                backgroundImage:
-                                    AssetImage(products[index].pLocation),
-                                radius: screenHeight * 0.15 / 2,
-                              ),
-                              Expanded(
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: <Widget>[
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 20),
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: <Widget>[
-                                          Text(
-                                            products[index].pName,
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 18,
-                                            ),
+          StreamBuilder<QuerySnapshot>(
+              stream: _fireStore.getCartData(uId),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  products = [];
+                  for (var doc in snapshot.data.documents) {
+                    var data = doc.data;
+
+                    products.add(
+                      Product(
+                        pID: doc.documentID,
+                        pName: data[kProductName],
+                        pPrice: data[kProductPrice],
+                        pLocation: data[kProductLocation],
+                        pQuantity: data[kProductQuantity],
+                      ),
+                    );
+                  }
+
+                  return Container(
+                    height: screenHeight -
+                        statusBarHeight -
+                        appBarHeight -
+                        (screenHeight * 0.1),
+                    child: ListView.builder(
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.all(10),
+                          child: GestureDetector(
+                            onTapUp: (details) {
+                              showCustomMenu(
+                                  details, context, products[index], index);
+                            },
+                            child: Container(
+                              color: kMainColor,
+                              child: Row(
+                                children: <Widget>[
+                                  CircleAvatar(
+                                    backgroundImage:
+                                        AssetImage(products[index].pLocation),
+                                    radius: screenHeight * 0.15 / 2,
+                                  ),
+                                  Expanded(
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: <Widget>[
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(left: 20),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: <Widget>[
+                                              Text(
+                                                products[index].pName,
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 18,
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                height: 10,
+                                              ),
+                                              Text(
+                                                '\$${products[index].pPrice}',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16,
+                                                ),
+                                              ),
+                                            ],
                                           ),
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                          Text(
-                                            '\$${products[index].pPrice}',
+                                        ),
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(right: 20),
+                                          child: Text(
+                                            '${products[index].pQuantity.toString()} Pcs',
                                             style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               fontSize: 16,
                                             ),
                                           ),
-                                        ],
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(right: 20),
-                                      child: Text(
-                                        '${products[index].pQuantity.toString()} Pcs',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16,
                                         ),
-                                      ),
+                                      ],
                                     ),
-                                  ],
-                                ),
-                              )
-                            ],
+                                  )
+                                ],
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                    );
-                  },
-                  itemCount: products.length,
-                ),
-              );
-            } else {
-              return Container(
-                height: screenHeight -
-                    screenHeight * 0.1 -
-                    appBarHeight -
-                    statusBarHeight,
-                child: Center(
-                  child: Text(
-                    'Cart is Empty',
-                    style: TextStyle(
-                      fontSize: 20,
+                        );
+
+                      },
+                      itemCount: products.length,
                     ),
-                  ),
-                ),
-              );
-            }
-          }),
+                  );
+                } else {
+                  return Container(
+                    height: screenHeight -
+                        (screenHeight * 0.1) -
+                        appBarHeight -
+                        statusBarHeight,
+                    child: Center(
+                      child: Text(
+                        'Cart is Empty',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                    ),
+                  );
+                }
+              }),
           Builder(
             builder: (context) => ButtonTheme(
               height: screenHeight * 0.1,
@@ -157,7 +191,7 @@ class CartScreen extends StatelessWidget {
     );
   }
 
-  void showCustomMenu(details, context, product) {
+  void showCustomMenu(details, context, product, index) {
     double dx = details.globalPosition.dx;
     double dy = details.globalPosition.dy;
     double dx2 = MediaQuery.of(context).size.width - dx;
@@ -170,8 +204,6 @@ class CartScreen extends StatelessWidget {
             child: Text('Edit'),
             onClick: () {
               Navigator.pop(context);
-              Provider.of<CartItem>(context, listen: false)
-                  .deleteProduct(product);
               Navigator.pushNamed(context, ProductInfo.id, arguments: product);
             },
           ),
@@ -179,8 +211,7 @@ class CartScreen extends StatelessWidget {
             child: Text('Delete'),
             onClick: () {
               Navigator.pop(context);
-              Provider.of<CartItem>(context, listen: false)
-                  .deleteProduct(product);
+              _fireStore.deleteCartItem(product.pID, uId);
             },
           ),
         ]);
@@ -239,5 +270,12 @@ class CartScreen extends StatelessWidget {
     }
 
     return totalPrice;
+  }
+
+  getUserId() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    setState(() {
+      uId = preferences.getString(kUserId);
+    });
   }
 }

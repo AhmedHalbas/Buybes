@@ -20,3 +20,6 @@ const kAddress = 'Address';
 const kIsConfirmed = 'isConfirmed';
 const kProductQuantity = 'Quantity';
 const kKeepMeLoggedIn = 'KeepMeLoggedIn';
+const kProductsToCartCollection = 'ProductsToCart';
+const kUser = 'User Cart';
+const kUserId = 'UserId';

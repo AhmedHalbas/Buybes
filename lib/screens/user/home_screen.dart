@@ -44,9 +44,9 @@ class _HomeScreenState extends State<HomeScreen> {
             bottomNavigationBar: BottomNavigationBar(
               onTap: (value) async {
                 if (value == 1) {
-                  SharedPreferences pref =
-                      await SharedPreferences.getInstance();
-                  pref.clear();
+//                  SharedPreferences pref =
+//                      await SharedPreferences.getInstance();
+//                  pref.clear();
                   await auth.signOut();
                   Navigator.popAndPushNamed(context, LoginScreen.id);
                 }
@@ -251,5 +251,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   getCurrentUser() async {
     firebaseUser = await auth.getUser();
+    getUserId();
+  }
+
+  getUserId() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+
+    preferences.setString(kUserId, firebaseUser.uid);
   }
 }
