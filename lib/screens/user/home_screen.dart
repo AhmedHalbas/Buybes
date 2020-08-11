@@ -44,9 +44,9 @@ class _HomeScreenState extends State<HomeScreen> {
             bottomNavigationBar: BottomNavigationBar(
               onTap: (value) async {
                 if (value == 1) {
-//                  SharedPreferences pref =
-//                      await SharedPreferences.getInstance();
-//                  pref.clear();
+                  SharedPreferences pref =
+                      await SharedPreferences.getInstance();
+                  pref.clear();
                   await auth.signOut();
                   Navigator.popAndPushNamed(context, LoginScreen.id);
                 }

@@ -147,7 +147,6 @@ class _CartScreenState extends State<CartScreen> {
                             ),
                           ),
                         );
-
                       },
                       itemCount: products.length,
                     ),
