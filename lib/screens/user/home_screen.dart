@@ -6,6 +6,7 @@ import 'package:buybes/screens/user/cart_screen.dart';
 import 'package:buybes/screens/user/product_info.dart';
 import 'package:buybes/services/auth.dart';
 import 'package:buybes/services/fire_store.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -209,9 +210,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Stack(
                     children: <Widget>[
                       Positioned.fill(
-                        child: Image.asset(
-                          products[index].pLocation,
-                          fit: BoxFit.fill,
+                        child: CachedNetworkImage(
+                          imageUrl: products[index].pLocation,
+                          placeholder: (context, url) =>
+                              CircularProgressIndicator(),
+                          errorWidget: (context, url, error) =>
+                              Icon(Icons.error),
                         ),
                       ),
                       Positioned(

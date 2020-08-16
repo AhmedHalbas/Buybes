@@ -3,6 +3,7 @@ import 'package:buybes/custom_widgets/custom_pop_up_menu.dart';
 import 'package:buybes/models/product.dart';
 import 'package:buybes/screens/admin/edit_product.dart';
 import 'package:buybes/services/fire_store.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -71,9 +72,12 @@ class _ManageProductsState extends State<ManageProducts> {
                     child: Stack(
                       children: <Widget>[
                         Positioned.fill(
-                          child: Image.asset(
-                            products[index].pLocation,
-                            fit: BoxFit.fill,
+                          child: CachedNetworkImage(
+                            imageUrl: products[index].pLocation,
+                            placeholder: (context, url) =>
+                                CircularProgressIndicator(),
+                            errorWidget: (context, url, error) =>
+                                Icon(Icons.error),
                           ),
                         ),
                         Positioned(

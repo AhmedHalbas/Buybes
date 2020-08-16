@@ -3,6 +3,7 @@ import 'package:buybes/custom_widgets/custom_pop_up_menu.dart';
 import 'package:buybes/models/product.dart';
 import 'package:buybes/screens/user/product_info.dart';
 import 'package:buybes/services/fire_store.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -92,8 +93,8 @@ class _CartScreenState extends State<CartScreen> {
                               child: Row(
                                 children: <Widget>[
                                   CircleAvatar(
-                                    backgroundImage:
-                                        AssetImage(products[index].pLocation),
+                                    backgroundImage: CachedNetworkImageProvider(
+                                        products[index].pLocation),
                                     radius: screenHeight * 0.15 / 2,
                                   ),
                                   Expanded(

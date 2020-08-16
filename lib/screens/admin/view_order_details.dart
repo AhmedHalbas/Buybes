@@ -1,6 +1,7 @@
 import 'package:buybes/models/order.dart';
 import 'package:buybes/models/product.dart';
 import 'package:buybes/services/fire_store.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -45,8 +46,8 @@ class ViewOrderDetails extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: <Widget>[
                               CircleAvatar(
-                                backgroundImage:
-                                    AssetImage(products[index].pLocation),
+                                backgroundImage: CachedNetworkImageProvider(
+                                    products[index].pLocation),
                                 radius: MediaQuery.of(context).size.height *
                                     0.15 /
                                     2,

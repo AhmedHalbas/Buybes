@@ -15,6 +15,7 @@ dependencies:
   provider: ^4.0.1
   cloud_firestore: ^0.13.7
   shared_preferences: ^0.5.8
+  cached_network_image: ^2.2.0+1
 
 dev_dependencies:
   flutter_test:
@@ -29,10 +30,6 @@ flutter:
 
   assets:
     - images/icons/
-    - images/jackets/
-    - images/shoes/
-    - images/t-shirts/
-    - images/trousers/
 
   fonts:
     - family: Pacifico

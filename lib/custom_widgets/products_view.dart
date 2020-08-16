@@ -1,6 +1,7 @@
 import 'package:buybes/functions.dart';
 import 'package:buybes/models/product.dart';
 import 'package:buybes/screens/user/product_info.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 Widget productsView(String category, List<Product> allProducts) {
@@ -19,9 +20,10 @@ Widget productsView(String category, List<Product> allProducts) {
         child: Stack(
           children: <Widget>[
             Positioned.fill(
-              child: Image.asset(
-                products[index].pLocation,
-                fit: BoxFit.fill,
+              child: CachedNetworkImage(
+                imageUrl: products[index].pLocation,
+                placeholder: (context, url) => CircularProgressIndicator(),
+                errorWidget: (context, url, error) => Icon(Icons.error),
               ),
             ),
             Positioned(

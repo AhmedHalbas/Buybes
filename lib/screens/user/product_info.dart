@@ -3,6 +3,7 @@ import 'package:buybes/models/product.dart';
 import 'package:buybes/screens/user/cart_screen.dart';
 import 'package:buybes/services/auth.dart';
 import 'package:buybes/services/fire_store.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -39,9 +40,13 @@ class _ProductInfoState extends State<ProductInfo> {
           Container(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
-            child: Image(
-              image: AssetImage(product?.pLocation ?? ''),
+            child: FittedBox(
               fit: BoxFit.fill,
+              child: CachedNetworkImage(
+                imageUrl: product?.pLocation ?? '',
+                placeholder: (context, url) => CircularProgressIndicator(),
+                errorWidget: (context, url, error) => Icon(Icons.error),
+              ),
             ),
           ),
           Padding(
