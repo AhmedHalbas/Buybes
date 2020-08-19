@@ -1,16 +1,16 @@
-import 'package:buybes/screens/admin/admin_screen.dart';
-import 'package:buybes/screens/signup_screen.dart';
-import 'package:buybes/screens/user/home_screen.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:buybes/constants.dart';
 import 'package:buybes/custom_widgets/custom_text_field.dart';
 import 'package:buybes/custom_widgets/logo_and_name.dart';
+import 'package:buybes/provider/admin_mode.dart';
+import 'package:buybes/provider/modal_hud.dart';
+import 'package:buybes/screens/admin/admin_screen.dart';
+import 'package:buybes/screens/signup_screen.dart';
+import 'package:buybes/screens/user/home_screen.dart';
 import 'package:buybes/services/auth.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:provider/provider.dart';
-import 'package:buybes/provider/modal_hud.dart';
-import 'package:buybes/provider/admin_mode.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -138,33 +138,27 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    GestureDetector(
-                      onTap: () {
-                        Provider.of<AdminMode>(context, listen: false)
-                            .changeIsAdmin(true);
-                      },
-                      child: Text(
-                        'I\'m an Admin',
-                        style: TextStyle(
-                            color: Provider.of<AdminMode>(context).isAdmin
-                                ? kMainColor
-                                : Colors.white),
-                        textAlign: TextAlign.center,
-                      ),
+                    Text(
+                      'I\'m a User',
+                      style: TextStyle(color: Colors.white),
+                      textAlign: TextAlign.center,
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        Provider.of<AdminMode>(context, listen: false)
-                            .changeIsAdmin(false);
+                    Switch(
+                      value: Provider.of<AdminMode>(context, listen: false)
+                          .isAdmin,
+                      onChanged: (value) {
+                        setState(() {
+                          Provider.of<AdminMode>(context, listen: false)
+                              .changeIsAdmin(value);
+                        });
                       },
-                      child: Text(
-                        'I\'m a User',
-                        style: TextStyle(
-                            color: Provider.of<AdminMode>(context).isAdmin
-                                ? Colors.white
-                                : kMainColor),
-                        textAlign: TextAlign.center,
-                      ),
+                      activeTrackColor: Colors.white,
+                      activeColor: kMainColor,
+                    ),
+                    Text(
+                      'I\'m an Admin',
+                      style: TextStyle(color: Colors.white),
+                      textAlign: TextAlign.center,
                     ),
                   ],
                 ),
