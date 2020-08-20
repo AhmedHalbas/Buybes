@@ -8,8 +8,8 @@ import 'package:flutter/material.dart';
 
 import '../../constants.dart';
 
-class ViewOrderDetails extends StatelessWidget {
-  static String id = 'ViewOrderDetails';
+class ViewOrderDetailsUser extends StatelessWidget {
+  static String id = 'ViewOrderDetailsUser';
 
   @override
   Widget build(BuildContext context) {
@@ -99,36 +99,15 @@ class ViewOrderDetails extends StatelessWidget {
                             buttonColor: kMainColor,
                             child: RaisedButton(
                               onPressed: () {
-                                fireStore.editOrder(order.documentId, {
-                                  kIsConfirmed: true,
-                                });
-
-                                Scaffold.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('Order Confirmed'),
-                                  ),
-                                );
-                              },
-                              child: Text('Confirm Order'),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: 15,
-                        ),
-                        Expanded(
-                          child: ButtonTheme(
-                            buttonColor: kMainColor,
-                            child: RaisedButton(
-                              onPressed: () {
                                 fireStore.deleteOrder(order.documentId);
                                 Scaffold.of(context).showSnackBar(
                                   SnackBar(
-                                    content: Text('Order Deleted'),
+                                    content: Text('Order Cancelled'),
                                   ),
                                 );
+                                Navigator.pop(context);
                               },
-                              child: Text('Delete Order'),
+                              child: Text('Cancel Order'),
                             ),
                           ),
                         ),

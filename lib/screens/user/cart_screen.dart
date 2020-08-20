@@ -231,7 +231,8 @@ class _CartScreenState extends State<CartScreen> {
               fireStore.storeOrders({
                 kTotallPrice: totalPrice,
                 kAddress: address,
-                kIsConfirmed: false
+                kIsConfirmed: false,
+                kUserId: uId,
               }, products);
               Navigator.pop(context);
               Scaffold.of(context).showSnackBar(

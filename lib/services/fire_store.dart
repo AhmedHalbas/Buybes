@@ -62,10 +62,10 @@ class FireStore {
     return _firestore.collection(kOrders).snapshots();
   }
 
-  Stream<QuerySnapshot> viewOrderDetails(documentId) {
+  Stream<QuerySnapshot> viewOrderDetails(uId) {
     return _firestore
         .collection(kOrders)
-        .document(documentId)
+        .document(uId)
         .collection(kOrderDetails)
         .snapshots();
   }

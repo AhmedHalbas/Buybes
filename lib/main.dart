@@ -6,13 +6,16 @@ import 'package:buybes/screens/admin/add_product.dart';
 import 'package:buybes/screens/admin/admin_screen.dart';
 import 'package:buybes/screens/admin/edit_product.dart';
 import 'package:buybes/screens/admin/manage_products.dart';
-import 'package:buybes/screens/admin/view_order_details.dart';
+import 'package:buybes/screens/admin/view_order_details_admin.dart';
 import 'package:buybes/screens/admin/view_orders.dart';
 import 'package:buybes/screens/login_screen.dart';
 import 'package:buybes/screens/signup_screen.dart';
 import 'package:buybes/screens/user/cart_screen.dart';
 import 'package:buybes/screens/user/home_screen.dart';
 import 'package:buybes/screens/user/product_info.dart';
+import 'package:buybes/screens/user/products.dart';
+import 'package:buybes/screens/user/track_orders.dart';
+import 'package:buybes/screens/user/view_order_details_user.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -47,14 +50,17 @@ class myApp extends StatelessWidget {
                 LoginScreen.id: (context) => LoginScreen(),
                 SignupScreen.id: (context) => SignupScreen(),
                 HomeScreen.id: (context) => HomeScreen(),
+                Products.id: (context) => Products(),
                 AdminScreen.id: (context) => AdminScreen(),
                 AddProduct.id: (context) => AddProduct(),
                 ManageProducts.id: (context) => ManageProducts(),
                 EditProduct.id: (context) => EditProduct(),
                 ViewOrders.id: (context) => ViewOrders(),
-                ViewOrderDetails.id: (context) => ViewOrderDetails(),
+                ViewOrderDetailsAdmin.id: (context) => ViewOrderDetailsAdmin(),
                 ProductInfo.id: (context) => ProductInfo(),
                 CartScreen.id: (context) => CartScreen(),
+                TrackDelivery.id: (context) => TrackDelivery(),
+                ViewOrderDetailsUser.id: (context) => ViewOrderDetailsUser(),
               },
             ),
           );
